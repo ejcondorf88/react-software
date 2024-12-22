@@ -10,15 +10,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
+
     "axios": "^1.7.9",
     "lucide-react": "^0.469.0",
     "primereact": "^10.8.5",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "6"
+    "react-router-dom": "6",
+    "firebase": "^9.23.0",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.10.1",
+    "react-phone-input-2": "^2.15.1",
+    "otp-input-react": "^0.3.0",
+    "react-scripts": "^5.0.1"
+
   },
   "devDependencies": {
+
+
     "@eslint/js": "^9.13.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
