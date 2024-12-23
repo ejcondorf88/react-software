@@ -1,12 +1,13 @@
 import { useState } from 'react'; // Importar useState
 import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
-import { Message } from 'primereact/message';
 import { User, Lock } from 'lucide-react'; // Íconos para username y password
 import { InputField } from '../form/InputField';
 import { Otp } from '../otp/Otp';
+import { useNavigate } from 'react-router-dom';
 
 export const LoginForm = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         userName: '',
         password: ''
@@ -42,10 +43,12 @@ export const LoginForm = () => {
 
         setErrors(newErrors);
 
+
         if (!newErrors.userName && !newErrors.password) {
             // Simular envío exitoso y mostrar pantalla de OTP
             setShowOtpScreen(true);
         }
+        navigate('/otp'+'/'+formData.userName);
     };
 
  

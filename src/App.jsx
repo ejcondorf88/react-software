@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import { LoginForm } from './components/login/Login';
  import './App.css';
+import { Otp } from './components/otp/Otp';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/edit/:id" element={<h1>Edit</h1>} />
         <Route path="/view/:id" element={<h1>View</h1>} />
         <Route path="*" element={<h1>404</h1>} />
+        <Route path="/otp/:userName" element={<Otp />} />
       </Routes>
     </div>
   );
