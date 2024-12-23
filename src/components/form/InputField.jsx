@@ -7,10 +7,10 @@ export const InputField = ({
   label,
   value,
   onChange,
-  error,
-  icon,
+  error = null,
+  icon = null,
   type = 'text',
-  placeholder,
+  placeholder = '',
 }) => {
   return (
     <div className="field">
@@ -50,13 +50,6 @@ export const InputField = ({
       </div>
     </div>
   );
-}
-
-InputField.defaultProps = {
-  icon: null,
-  error: null,
-  type: 'text',
-  placeholder: '',
 };
 
 InputField.propTypes = {
@@ -69,4 +62,3 @@ InputField.propTypes = {
   type: PropTypes.string,
   placeholder: PropTypes.string,
 };
-;
