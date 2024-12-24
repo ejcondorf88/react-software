@@ -1,9 +1,10 @@
 import { Button } from 'primereact/button';
 import { InputOtp } from 'primereact/inputotp';
-import { db } from '../../firebase';
+import { db,auth } from '../../firebase';
 import { getDocs, query, where, collection } from 'firebase/firestore';
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import {  RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
 
 export const Otp = ({ token, setTokens }) => {
     const location = useLocation();
@@ -11,43 +12,91 @@ export const Otp = ({ token, setTokens }) => {
 
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
+
+    // Configuración de reCAPTCHA
+    const onCaptchaVerify = () => {
+        if (!window.recaptchaVerifier) {
+            window.recaptchaVerifier = new RecaptchaVerifier(
+                'recaptcha-container',
+                {
+                    size: 'normal',
+                    callback: () => {
+                        console.log('ReCAPTCHA verified');
+                    },
+                    'expired-callback': () => {
+                        console.log('ReCAPTCHA expired. Please try again.');
+                    },
+                },
+                auth
+            );
+        }
+    };
+
+    // Envío del OTP al número de teléfono
+    const onSignInSubmit = () => {
+        if (!user || !user.phone) {
+            console.error('Phone number not found for user.');
+            return;
+        }
+
+        setLoading(true);
+        onCaptchaVerify();
+
+        const appVerifier = window.recaptchaVerifier;
+
+        signInWithPhoneNumber(auth, `+57${user.phone}`, appVerifier)
+            .then((confirmationResult) => {
+                window.confirmationResult = confirmationResult;
+                console.log('OTP sent successfully');
+            })
+            .catch((error) => {
+                console.error('Error sending OTP:', error);
+            })
+            .finally(() => setLoading(false));
+    };
+
+    // Obtiene al usuario por correo electrónico desde Firestore
     const getUserByEmail = async () => {
-        setLoading(true); // Inicia el estado de carga
+        setLoading(true);
         try {
-            const usersRef = collection(db, 'Users'); // Reemplaza 'Users' con el nombre de tu colección
-            const q = query(usersRef, where('email', '==', userName)); // Busca el email en el campo 'email'
+            const usersRef = collection(db, 'Users');
+            const q = query(usersRef, where('email', '==', userName));
             const querySnapshot = await getDocs(q);
 
             if (!querySnapshot.empty) {
-                const userData = querySnapshot.docs[0].data(); 
-                if(userData.password !== password){
-                    console.log({password},{userData})
-                    console.log("No user found with the provided email.");
-                    return
-                }// Obtén el primer documento
+                const userData = querySnapshot.docs[0].data();
+                if (userData.password !== password) {
+                    console.error('Invalid password');
+                    return;
+                }
+
+                if (!userData.phone) {
+                    console.error('Phone number not available for this user.');
+                    return;
+                }
+
                 setUser(userData);
-                console.log(userData); // Guarda los datos en el estado
             } else {
-                setUser(null); // Limpia el estado si no se encuentra
-                console.log("No user found with the provided email.");
+                console.log('No user found with the provided email.');
+                setUser(null);
             }
         } catch (error) {
-            console.error("Error fetching user:", error);
+            console.error('Error fetching user:', error);
         } finally {
-            setLoading(false); // Finaliza el estado de carga
+            setLoading(false);
         }
     };
 
     useEffect(() => {
-        getUserByEmail(); // Llama a la función para obtener datos al montar el componente
-    }, [userName]); // Se ejecuta cuando 'userName' cambia
+        getUserByEmail();
+    }, [userName]);
 
     if (loading) {
         return <p>Loading...</p>;
     }
 
     return (
-        <div className="flex flex-column align-items-center">
+        <div className="flex flex-column align-items-center" id="recaptcha-container">
             {user ? (
                 <>
                     <p className="font-bold text-xl mb-2">Authenticate Your Account</p>
@@ -61,8 +110,7 @@ export const Otp = ({ token, setTokens }) => {
                         style={{ gap: 0 }}
                     />
                     <div className="flex justify-content-between mt-5 align-self-stretch">
-                        <Button label="Resend Code" link className="p-0"></Button>
-                        <Button label="Submit Code"></Button>
+                        <Button onClick={onSignInSubmit} label="Submit Code" />
                     </div>
                 </>
             ) : (
