@@ -3,6 +3,7 @@ import { LoginForm } from './components/login/Login';
  import './App.css';
 import { Otp } from './components/otp/Otp';
 import { RegisterForm } from './components/regiter/Register';
+import { Dashboard } from './components/dashboard/Dashboard';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/view/:id" element={<h1>View</h1>} />
         <Route path="*" element={<h1>404</h1>} />
         <Route path="/otp" element={<Otp />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </div>
   );

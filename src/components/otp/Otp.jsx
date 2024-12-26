@@ -8,10 +8,12 @@ import { Card } from 'primereact/card';
 import { Message } from 'primereact/message';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { InputText } from 'primereact/inputtext';
+import { useNavigate } from 'react-router-dom';
 
 export const Otp = () => {
     const location = useLocation();
     const { userName, password } = location.state || {};
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
@@ -94,8 +96,12 @@ export const Otp = () => {
 
             const result = await confirmationResult.confirm(otpCode);
             console.log('Número de teléfono verificado exitosamente:', result.user);
-            // Aquí puedes agregar la lógica después de la verificación exitosa
-            
+
+            if (user) {
+                navigate('/dashboard', { state: { user } });
+            } else {
+                navigate('/register', { state: { userName, password } });
+            }
         } catch (error) {
             console.error('Error al verificar OTP:', error);
             setError('Código inválido. Por favor, intente de nuevo.');
