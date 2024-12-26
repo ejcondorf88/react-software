@@ -1,127 +1,245 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { RecaptchaVerifier, signInWithPhoneNumber } from 'firebase/auth';
-import { auth } from '../../firebase'; // Ajusta la ruta según sea necesario
+import { getDocs, query, where, collection } from 'firebase/firestore';
+import { db, auth } from '../../firebase';
+import { Button } from 'primereact/button';
+import { Card } from 'primereact/card';
+import { Message } from 'primereact/message';
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { InputText } from 'primereact/inputtext';
 
 export const Otp = () => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [verificationId, setVerificationId] = useState('');
-  const [error, setError] = useState(null);
-  const [recaptchaVerifier, setRecaptchaVerifier] = useState(null);
+    const location = useLocation();
+    const { userName, password } = location.state || {};
 
-  useEffect(() => {
-    // Inicializa reCAPTCHA cuando el componente se monta
-    initializeRecaptcha();
-    return () => {
-      // Limpia recaptcha cuando el componente se desmonta
-      if (recaptchaVerifier) {
-        recaptchaVerifier.clear();
-      }
+    const [loading, setLoading] = useState(false);
+    const [user, setUser] = useState(null);
+    const [error, setError] = useState(null);
+    const [token, setToken] = useState(['', '', '', '', '', '']);
+
+    const formatPhoneNumber = (phone) => {
+        const cleanPhone = phone.startsWith('0') ? phone.substring(1) : phone;
+        return `+593${cleanPhone}`;
     };
-  }, []);  // Solo se ejecuta al montar el componente
 
-  const initializeRecaptcha = async () => {
-    try {
-      // Limpiar cualquier verificador existente si es necesario
-      if (window.recaptchaVerifier) {
-        window.recaptchaVerifier.clear();
-      }
+    const initializeRecaptcha = async () => {
+        try {
+            // Limpiar instancia anterior si existe
+            if (window.recaptchaVerifier) {
+                await window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
 
-      const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible',
-        callback: (response) => {
-          // reCAPTCHA resuelto, habilitar el botón de verificación
-          console.log('reCAPTCHA verificado');
-        },
-        'expired-callback': () => {
-          // Resetear reCAPTCHA cuando expire
-          setError('reCAPTCHA expirado. Por favor resuélvelo de nuevo.');
-          initializeRecaptcha();
+            window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+                size: 'invisible',
+                callback: () => {
+                    console.log('reCAPTCHA verificado exitosamente');
+                },
+                'expired-callback': () => {
+                    setError('reCAPTCHA expirado. Por favor, intente de nuevo.');
+                }
+            });
+
+            // Pre-render reCAPTCHA
+            await window.recaptchaVerifier.render();
+            
+        } catch (error) {
+            console.error('Error al inicializar reCAPTCHA:', error);
+            setError('Error al inicializar reCAPTCHA. Por favor, recargue la página.');
+            throw error;
         }
-      });
+    };
 
-      await verifier.render();
-      setRecaptchaVerifier(verifier);
-    } catch (err) {
-      console.error('Error al inicializar reCAPTCHA:', err);
-      setError('No se pudo inicializar el sistema de verificación. Por favor recarga la página.');
-    }
-  };
+    const sendOtp = async (phone) => {
+        try {
+            setLoading(true);
+            const formattedPhone = formatPhoneNumber(phone);
+            console.log('Enviando OTP al número:', formattedPhone);
 
-  const initializeUser = async () => {
-    try {
-      setError(null);
-      
-      if (!phoneNumber) {
-        throw new Error('No se proporcionó un número de teléfono');
-      }
+            await initializeRecaptcha();
+            const appVerifier = window.recaptchaVerifier;
 
-      if (!recaptchaVerifier) {
-        throw new Error('El sistema de verificación no está inicializado');
-      }
+            const confirmationResult = await signInWithPhoneNumber(auth, formattedPhone, appVerifier);
+            window.confirmationResult = confirmationResult;
+            console.log('OTP enviado exitosamente');
+            
+        } catch (error) {
+            console.error('Error al enviar OTP:', error);
+            setError('Error al enviar el código. Por favor, intente de nuevo en unos momentos.');
+            
+            if (window.recaptchaVerifier) {
+                await window.recaptchaVerifier.clear();
+                window.recaptchaVerifier = null;
+            }
+            throw error;
+        } finally {
+            setLoading(false);
+        }
+    };
 
-      const formattedPhoneNumber = formatPhoneNumber(phoneNumber);
-      
-      // Asegúrate de que el número esté en el formato correcto
-      if (!formattedPhoneNumber.startsWith('+')) {
-        throw new Error('Formato de número de teléfono inválido');
-      }
+    const verifyOtp = async () => {
+        const otpCode = token.join('');
+        if (!otpCode || otpCode.length !== 6) {
+            setError('Por favor ingrese un código válido de 6 dígitos');
+            return;
+        }
 
-      const confirmationResult = await signInWithPhoneNumber(
-        auth,
-        formattedPhoneNumber,
-        recaptchaVerifier
-      );
+        try {
+            setLoading(true);
+            const confirmationResult = window.confirmationResult;
+            if (!confirmationResult) {
+                throw new Error('No se encontró resultado de confirmación');
+            }
 
-      setVerificationId(confirmationResult.verificationId);
-    } catch (err) {
-      console.error('Error durante la inicialización:', err);
-      setError(err.message || 'Ocurrió un error. Por favor inténtalo de nuevo.');
-    }
-  };
+            const result = await confirmationResult.confirm(otpCode);
+            console.log('Número de teléfono verificado exitosamente:', result.user);
+            // Aquí puedes agregar la lógica después de la verificación exitosa
+            
+        } catch (error) {
+            console.error('Error al verificar OTP:', error);
+            setError('Código inválido. Por favor, intente de nuevo.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const formatPhoneNumber = (number) => {
-    // Limpiar el número de teléfono para incluir solo dígitos y asegurar el formato correcto
-    const cleaned = number.replace(/\D/g, '');
-    return `+${cleaned}`;
-  };
+    const handleInputChange = (index, value) => {
+        const newToken = [...token];
+        newToken[index] = value;
+        setToken(newToken);
 
-  return (
-    <div className="p-4">
-      {/* Contenedor de reCAPTCHA */}
-      <div id="recaptcha-container" className="mb-4"></div>
-      
-      {/* Mostrar mensaje de error si hay algún error */}
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        // Mover al siguiente input si hay valor
+        if (value && index < 5) {
+            const nextInput = document.querySelector(`input[name="otp-${index + 1}"]`);
+            if (nextInput) nextInput.focus();
+        }
+    };
+
+    const getUserByEmail = async () => {
+        if (!userName || !password) {
+            setError('Credenciales no proporcionadas');
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const usersRef = collection(db, 'Users');
+            const q = query(usersRef, where('email', '==', userName));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const userData = querySnapshot.docs[0].data();
+                console.log('Datos del usuario:', userData);
+
+                if (userData.password !== password) {
+                    throw new Error('Contraseña inválida');
+                }
+
+                if (!userData.phone) {
+                    throw new Error('No hay número de teléfono disponible para este usuario');
+                }
+
+                setUser(userData);
+                await sendOtp(userData.phone);
+            } else {
+                throw new Error('No se encontró usuario con el correo proporcionado');
+            }
+        } catch (error) {
+            console.error('Error en getUserByEmail:', error);
+            setError(error.message || 'Ocurrió un error. Por favor, intente de nuevo.');
+            setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        getUserByEmail();
+    }, [userName]);
+
+
+    const header = (
+        <div className="text-center p-3">
+            <h2 className="text-2xl font-bold m-0">Verificación en dos pasos</h2>
         </div>
-      )}
+    );
 
-      {/* Campo de entrada para el número de teléfono */}
-      <input
-        type="tel"
-        value={phoneNumber}
-        onChange={(e) => setPhoneNumber(e.target.value)}
-        placeholder="Ingresa el número de teléfono"
-        className="border p-2 rounded mb-4 w-full"
-      />
+    return (
+        <div className="flex align-items-center justify-content-center min-h-screen bg-gray-50 p-4">
+            <Card className="w-full md:w-30rem" header={header}>
+                <div id="recaptcha-container"></div>
 
-      {/* Botón para enviar el código de verificación */}
-      <button
-        onClick={initializeUser}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-        disabled={!recaptchaVerifier || !phoneNumber}
-      >
-        Enviar código de verificación
-      </button>
+                <div className="flex flex-column gap-4">
+                    {error && (
+                        <Message 
+                            severity="error" 
+                            text={error}
+                            className="w-full"
+                        />
+                    )}
 
-      {/* Mostrar mensaje de confirmación cuando el OTP sea enviado */}
-      {verificationId && (
-        <div className="mt-4">
-          <p className="text-green-600">¡Código de verificación enviado!</p>
-          {/* Aquí puedes agregar los campos para ingresar el OTP */}
+                    {loading ? (
+                        <div className="flex justify-content-center p-4">
+                            <ProgressSpinner 
+                                style={{width: '50px', height: '50px'}}
+                                strokeWidth="4"
+                                animationDuration=".5s"
+                            />
+                        </div>
+                    ) : user ? (
+                        <div className="flex flex-column gap-4">
+                            <p className="text-center text-gray-600 m-0">
+                                Por favor ingrese el código enviado al número
+                                <span className="font-bold"> ****{user.phone?.slice(-4)}</span>
+                            </p>
+
+                            <div className="flex justify-content-center gap-2">
+                                {token.map((digit, index) => (
+                                    <InputText
+                                        key={index}
+                                        name={`otp-${index}`}
+                                        value={digit}
+                                        onChange={(e) => handleInputChange(index, e.target.value)}
+                                        className="w-4rem h-4rem text-center text-xl"
+                                        maxLength={1}
+                                        keyfilter="int"
+                                        autoComplete="off"
+                                    />
+                                ))}
+                            </div>
+
+                            <div className="flex flex-column gap-2">
+                                <Button 
+                                    label={loading ? 'Verificando...' : 'Verificar código'}
+                                    icon={loading ? 'pi pi-spinner pi-spin' : 'pi pi-check'}
+                                    onClick={verifyOtp}
+                                    disabled={loading || token.some(digit => !digit)}
+                                    className="w-full"
+                                />
+
+                                <Button
+                                    label="Reenviar código"
+                                    icon="pi pi-refresh"
+                                    onClick={() => getUserByEmail()}
+                                    disabled={loading}
+                                    severity="secondary"
+                                    text
+                                    className="w-full"
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <Message 
+                            severity="info" 
+                            text="No se encontró usuario. Por favor, verifique sus credenciales."
+                            className="w-full"
+                        />
+                    )}
+                </div>
+            </Card>
         </div>
-      )}
-    </div>
-  );
+    );
 };
+
+export default Otp;
