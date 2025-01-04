@@ -14,7 +14,7 @@ export const UserMenu = ({ username, avatarUrl, onLogout }) => {
     <div className="relative">
       <div className="flex items-center gap-4">
         {/* Notifications */}
-        <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
+        <button className="p-2 text-gray-300 hover:text-white hover:bg-indigo-800 rounded-full relative">
           <Bell className="w-5 h-5" />
           {hasNotifications && (
             <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full" />
@@ -24,14 +24,14 @@ export const UserMenu = ({ username, avatarUrl, onLogout }) => {
         {/* User Profile Button */}
         <button 
           onClick={toggleMenu}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          className="flex items-center gap-2 px-4 py-2 bg-indigo-800 hover:bg-indigo-700 rounded-full transition-colors duration-200"
         >
           {avatarUrl ? (
             <img src={avatarUrl} alt={username} className="w-6 h-6 rounded-full" />
           ) : (
-            <User className="w-5 h-5 text-gray-600" />
+            <User className="w-5 h-5 text-gray-300" />
           )}
-          <span className="font-medium text-gray-700">{username}</span>
+          <span className="font-medium text-white">{username}</span>
         </button>
       </div>
 

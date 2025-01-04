@@ -16,8 +16,8 @@ export const NavLink = ({ href, icon: Icon, label, isActive = false }) => {
         className={`
           px-4 py-2 rounded-md transition-all duration-200 flex items-center gap-2
           ${isActive 
-            ? 'bg-indigo-50 text-indigo-600' 
-            : 'text-gray-700 hover:text-indigo-600 hover:bg-gray-50'
+            ? 'bg-indigo-800 text-white' 
+            : 'text-gray-300 hover:text-white hover:bg-indigo-800'
           }
         `}
       >
