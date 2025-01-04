@@ -1,40 +1,26 @@
-import { User } from 'lucide-react'
-import React from 'react'
+import { useCallback } from 'react';
+import { Logo } from '../logo/Logo';
+import { Navigation } from '../navigation/Navigation';
+import { UserMenu } from '../usermenu/UserMenu';
 
-function Header() {
+export const Header = () => {
+  const handleLogout = useCallback(() => {
+    // Add logout logic here
+    console.log('Logging out...');
+  }, []);
 
-    const getUser = () => {
-        
-    }
-   
-  
-  
-  
-    return (
-    <>
-    <div className="header">
-    <nav>
-            <ul>
-                <h1>User Loged: {"user"}</h1>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">View Flat</a></li>
-                <li><a href="#">Create Flat</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Logout</a></li>
-
-            </ul>
-        </nav>
-
-
-    </div>
-        
-    
-    
-    
-    </>
-    
-    
-  )
-}
-
-export default Header
+  return (
+    <header className="bg-white border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          <Logo />
+          <Navigation />
+          <UserMenu 
+            username="John Doe"
+            onLogout={handleLogout}
+          />
+        </div>
+      </div>
+    </header>
+  );
+};
