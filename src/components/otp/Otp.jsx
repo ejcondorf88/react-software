@@ -170,23 +170,22 @@ export const Otp = () => {
             <h2 className="text-2xl font-bold m-0">Verificación en dos pasos</h2>
         </div>
     );
-
     return (
-        <div className="flex align-items-center justify-content-center min-h-screen bg-gray-50 p-4">
-            <Card className="w-full md:w-30rem" header={header}>
+        <div className="flex min-h-screen  p-4">
+            <Card className="w-full md:w-30rem m-auto shadow-lg" header={header}>
                 <div id="recaptcha-container"></div>
 
-                <div className="flex flex-column gap-4">
+                <div className="flex flex-col space-y-6">
                     {error && (
                         <Message 
                             severity="error" 
                             text={error}
-                            className="w-full"
+                            className="w-full border-round-xl"
                         />
                     )}
 
                     {loading ? (
-                        <div className="flex justify-content-center p-4">
+                        <div className="flex justify-center p-6">
                             <ProgressSpinner 
                                 style={{width: '50px', height: '50px'}}
                                 strokeWidth="4"
@@ -194,20 +193,20 @@ export const Otp = () => {
                             />
                         </div>
                     ) : user ? (
-                        <div className="flex flex-column gap-4">
-                            <p className="text-center text-gray-600 m-0">
+                        <div className="flex flex-col space-y-6">
+                            <p className="text-center text-gray-600 text-lg m-0">
                                 Por favor ingrese el código enviado al número
-                                <span className="font-bold"> ****{user.phone?.slice(-4)}</span>
+                                <span className="font-semibold ml-1">****{user.phone?.slice(-4)}</span>
                             </p>
 
-                            <div className="flex justify-content-center gap-2">
+                            <div className="flex justify-center gap-3">
                                 {token.map((digit, index) => (
                                     <InputText
                                         key={index}
                                         name={`otp-${index}`}
                                         value={digit}
                                         onChange={(e) => handleInputChange(index, e.target.value)}
-                                        className="w-4rem h-4rem text-center text-xl"
+                                        className="w-14 h-14 text-center text-xl shadow-sm border-2 hover:border-primary focus:border-primary transition-colors"
                                         maxLength={1}
                                         keyfilter="int"
                                         autoComplete="off"
@@ -215,13 +214,13 @@ export const Otp = () => {
                                 ))}
                             </div>
 
-                            <div className="flex flex-column gap-2">
+                            <div className="flex flex-col space-y-3 pt-4">
                                 <Button 
                                     label={loading ? 'Verificando...' : 'Verificar código'}
                                     icon={loading ? 'pi pi-spinner pi-spin' : 'pi pi-check'}
                                     onClick={verifyOtp}
                                     disabled={loading || token.some(digit => !digit)}
-                                    className="w-full"
+                                    className="p-button-primary w-full h-12 text-lg font-semibold"
                                 />
 
                                 <Button
@@ -231,7 +230,7 @@ export const Otp = () => {
                                     disabled={loading}
                                     severity="secondary"
                                     text
-                                    className="w-full"
+                                    className="w-full h-12 text-lg hover:bg-gray-100 transition-colors"
                                 />
                             </div>
                         </div>
@@ -239,13 +238,14 @@ export const Otp = () => {
                         <Message 
                             severity="info" 
                             text="No se encontró usuario. Por favor, verifique sus credenciales."
-                            className="w-full"
+                            className="w-full border-round-xl"
                         />
                     )}
                 </div>
             </Card>
         </div>
     );
+
 };
 
 export default Otp;
