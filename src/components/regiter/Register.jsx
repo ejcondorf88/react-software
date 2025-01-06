@@ -99,12 +99,13 @@ export const RegisterForm = () => {
           <div className="grid">
             <PhoneInput
               name="phone"
-              value={formData.phone}
-              onChange={(phone) => setFormData({ ...formData, phone })}
+              value="0983408313"
+              onChange={()=>{}}
               inputProps={{
                 name: 'phone',
                 required: true,
                 autoFocus: true,    
+                disabled: true
               }}
             />
            
