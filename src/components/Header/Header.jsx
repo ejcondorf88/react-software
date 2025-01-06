@@ -10,6 +10,7 @@ export const Header = () => {
   const handleLogout = useCallback(() => {
     // Add logout logic here
     console.log('Logging out...');
+    navigate('/login');
   }, []);
 
   return (
