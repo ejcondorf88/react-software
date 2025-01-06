@@ -3,7 +3,10 @@ import { Logo } from '../logo/Logo';
 import { Navigation } from '../navigation/Navigation';
 import { UserMenu } from '../usermenu/UserMenu';
 
+import { useNavigate } from 'react-router-dom';
 export const Header = () => {
+  const navigate = useNavigate();
+
   const handleLogout = useCallback(() => {
     // Add logout logic here
     console.log('Logging out...');

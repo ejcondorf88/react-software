@@ -1,8 +1,10 @@
 import { Activity, Users, DollarSign, ShoppingCart, BarChart3, TrendingUp, Calendar, Bell } from 'lucide-react';
 import { Header } from "../Header/Header";
 import { Footer } from "../foo/Footer";
+import { useNavigate } from 'react-router-dom';
 
 const StatCard = ({ icon: Icon, title, value, trend }) => (
+  
   <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <div className="flex items-center justify-between">
       <div>

@@ -1,27 +1,38 @@
 import { Home, Building, PlusSquare, User } from 'lucide-react';
-import { NavLink } from '../navlink/NavLink';
+import { useNavigate } from 'react-router-dom';
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'Home' },
   { href: '/flats', icon: Building, label: 'View Flats' },
-  { href: '/flats/create', icon: PlusSquare, label: 'Create Flat' },
+  { href: '/create', icon: PlusSquare, label: 'Create Flat' },
   { href: '/profile', icon: User, label: 'Profile' },
 ];
 
 export const Navigation = () => {
+  const navigate = useNavigate();
   const currentPath = window.location.pathname;
+
+  const handleClick = (e, href) => {
+    e.preventDefault(); // Evita la recarga de la página
+    navigate(href); // Navega a la ruta especificada
+  };
 
   return (
     <nav className="flex-1 ml-8">
       <ul className="flex items-center space-x-2">
         {navItems.map((item) => (
-          <NavLink
-            key={item.href}
-            href={item.href}
-            icon={item.icon}
-            label={item.label}
-            isActive={currentPath === item.href}
-          />
+          <li key={item.href}>
+            <a
+              href={item.href}
+              onClick={(e) => handleClick(e, item.href)} // Previene la recarga
+              className={`flex items-center space-x-2 ${
+                currentPath === item.href ? 'text-blue-500' : 'text-gray-700'
+              }`}
+            >
+              <item.icon />
+              <span>{item.label}</span>
+            </a>
+          </li>
         ))}
       </ul>
     </nav>
