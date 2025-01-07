@@ -24,7 +24,7 @@ const initialFormData = {
   name: '',
   lastName: '',
   password: '',
-  phone: '',
+  phone: '0983408313',
   rol: 'ADMIN',
 };
 
