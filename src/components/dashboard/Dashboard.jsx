@@ -2,8 +2,9 @@ import { Activity, Users, DollarSign, ShoppingCart, BarChart3, TrendingUp, Calen
 import { Header } from "../Header/Header";
 import { Footer } from "../foo/Footer";
 import { useNavigate } from 'react-router-dom';
-
+import { useLocation } from 'react-router-dom';
 const StatCard = ({ icon: Icon, title, value, trend }) => (
+
   
   <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
     <div className="flex items-center justify-between">
@@ -54,9 +55,12 @@ const Chart = () => (
 );
 
 export const Dashboard = () => {
+    const location = useLocation();
+    const user = location.state?.user;
+    
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      <Header user={user} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-8">

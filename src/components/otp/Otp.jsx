@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 
 export const Otp = () => {
     const location = useLocation();
+    console.log(location.state); // Obtener los datos de la ubicacio    n
     const { userName, password } = location.state || {};
     const navigate = useNavigate();
 
@@ -147,6 +148,7 @@ export const Otp = () => {
                 }
 
                 setUser(userData);
+                useLocation.state = { user: userData };
                 await sendOtp(userData.phone);
             } else {
                 throw new Error('No se encontró usuario con el correo proporcionado');

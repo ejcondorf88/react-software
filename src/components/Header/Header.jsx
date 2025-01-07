@@ -4,9 +4,11 @@ import { Navigation } from '../navigation/Navigation';
 import { UserMenu } from '../usermenu/UserMenu';
 
 import { useNavigate } from 'react-router-dom';
-export const Header = () => {
-  const navigate = useNavigate();
+export const Header = ({ user }) => {
+  const { name } = user;
 
+
+  const navigate = useNavigate();
   const handleLogout = useCallback(() => {
     // Add logout logic here
     console.log('Logging out...');
@@ -20,7 +22,7 @@ export const Header = () => {
           <Logo />
           <Navigation />
           <UserMenu 
-            username="John Doe"
+            username={name}
             onLogout={handleLogout}
           />
         </div>

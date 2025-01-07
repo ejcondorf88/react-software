@@ -5,6 +5,7 @@ import { User, LogOut, Settings, Bell } from 'lucide-react';
 export const UserMenu = ({ username, avatarUrl, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [hasNotifications] = useState(true);
+  console.log("El usuario es:", username);
 
   const toggleMenu = useCallback(() => {
     setIsOpen(prev => !prev);
