@@ -14,6 +14,7 @@ export const Otp = () => {
     const location = useLocation();
     console.log(location.state); // Obtener los datos de la ubicacio    n
     const { userName, password } = location.state || {};
+    const { user: userData } = location.state || {};
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(false);
@@ -99,6 +100,7 @@ export const Otp = () => {
             console.log('Número de teléfono verificado exitosamente:', result.user);
 
             if (user) {
+                useLocation.state = { user };
                 navigate('/dashboard', { state: { user } });
             } else {
                 navigate('/register', { state: { userName, password } });

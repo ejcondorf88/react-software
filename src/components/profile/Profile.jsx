@@ -11,6 +11,8 @@ import { Calendar } from 'primereact/calendar';
 import { Checkbox } from 'primereact/checkbox';
 import { validateForm as validate } from '../../utils/validate';
 export const Profile = () => {
+  const user = location.state?.user;
+
     const formData = {
         email: '',
         age: '',
@@ -42,7 +44,7 @@ export const Profile = () => {
         <>
           
           <div className="flex-col items-center">
-            <Header />
+            <Header user={user} />
             <Card className="w-full">
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-gray-800 text-center">Profile</h2>

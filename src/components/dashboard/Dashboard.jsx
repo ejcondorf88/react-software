@@ -3,6 +3,7 @@ import { Header } from "../Header/Header";
 import { Footer } from "../foo/Footer";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 const StatCard = ({ icon: Icon, title, value, trend }) => (
 
   
@@ -56,8 +57,16 @@ const Chart = () => (
 
 export const Dashboard = () => {
     const location = useLocation();
-    const user = location.state?.user;
-    
+    const  user = location.state?.user;
+    const navigate = useNavigate();
+    console.log(typeof user);
+    useEffect(() => {
+      console.log(typeof user); // Para verificar el tipo de `user` en consola.
+      if (!user) {
+        console.log("No hay usuario, redirigiendo a /login");
+        navigate('/login'); // Redirige al usuario a la página de login.
+      }
+    }, [user, navigate]);
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={user} />
