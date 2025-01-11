@@ -2,10 +2,10 @@ import { useState, useCallback } from 'react';
 import { User, LogOut, Settings, Bell } from 'lucide-react';
 
 
-export const UserMenu = ({ username, avatarUrl, onLogout }) => {
+export const UserMenu = ({ username, onLogout }) => {
+  console.log(username);
   const [isOpen, setIsOpen] = useState(false);
   const [hasNotifications] = useState(true);
-  console.log("El usuario es:", username);
 
   const toggleMenu = useCallback(() => {
     setIsOpen(prev => !prev);
@@ -27,12 +27,10 @@ export const UserMenu = ({ username, avatarUrl, onLogout }) => {
           onClick={toggleMenu}
           className="flex items-center gap-2 px-4 py-2 bg-indigo-800 hover:bg-indigo-700 rounded-full transition-colors duration-200"
         >
-          {avatarUrl ? (
-            <img src={avatarUrl} alt={username} className="w-6 h-6 rounded-full" />
-          ) : (
-            <User className="w-5 h-5 text-gray-300" />
-          )}
-          <span className="font-medium text-white">{username}</span>
+         
+            <User className="w-5 h-5 text-gray-300" alt="User Icon"  />
+      
+          <span className="font-medium text-white">{username.user}</span>
         </button>
       </div>
 

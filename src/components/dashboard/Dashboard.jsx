@@ -59,17 +59,20 @@ export const Dashboard = () => {
     const location = useLocation();
     const  user = location.state?.user;
     const navigate = useNavigate();
-    console.log(typeof user);
-    useEffect(() => {
-      console.log(typeof user); // Para verificar el tipo de `user` en consola.
+    const veryfyUser = () => {
       if (!user) {
         console.log("No hay usuario, redirigiendo a /login");
         navigate('/login'); // Redirige al usuario a la página de login.
       }
-    }, [user, navigate]);
+      console.log("El usuario es:", user.name);      
+    }
+    useEffect(() => {
+      veryfyUser();
+      }
+  , [user, navigate]);
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header user={user} />
+      <Header user={user.name} />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-8">

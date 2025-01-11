@@ -4,7 +4,7 @@ import { Navigation } from '../navigation/Navigation';
 import { UserMenu } from '../usermenu/UserMenu';
 
 import { useNavigate } from 'react-router-dom';
-export const Header = ({ name }) => {
+export const Header = (username) => {
 
   const navigate = useNavigate();
   const handleLogout = useCallback(() => {
@@ -20,7 +20,7 @@ export const Header = ({ name }) => {
           <Logo />
           <Navigation />
           <UserMenu 
-            username={name}
+            username={username}
             onLogout={handleLogout}
           />
         </div>
