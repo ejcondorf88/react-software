@@ -9,9 +9,11 @@ import { Message } from 'primereact/message';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 export const Otp = () => {
     const location = useLocation();
+    const {login}= useAuth();
     console.log(location.state); // Obtener los datos de la ubicacio    n
     const { userName, password } = location.state || {};
     const { user: userData } = location.state || {};
@@ -101,6 +103,7 @@ export const Otp = () => {
 
             if (user) {
                 useLocation.state = { user };
+                login(user);
                 navigate('/dashboard', { state: { user } });
             } else {
                 navigate('/register', { state: { userName, password } });
@@ -151,6 +154,7 @@ export const Otp = () => {
 
                 setUser(userData);
                 useLocation.state = { user: userData };
+                
                 await sendOtp(userData.phone);
             } else {
                 throw new Error('No se encontró usuario con el correo proporcionado');

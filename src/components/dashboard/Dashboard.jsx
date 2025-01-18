@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 const StatCard = ({ icon: Icon, title, value, trend }) => (
 
   
@@ -58,9 +59,9 @@ const Chart = () => (
 
 export const Dashboard = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [isLoading, setIsLoading] = useState(true);
-    const user = location.state?.user;
+    const { user } = useAuth();
+    print("user", user);
 
     useEffect(() => {
         const verifyUser = () => {

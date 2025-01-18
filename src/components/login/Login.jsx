@@ -3,9 +3,11 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { User, Lock } from 'lucide-react';
 import { InputField } from '../form/InputField';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext';
 
 export const LoginForm = () => {
+    const { login } = useAuth();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
         userName: '',
@@ -46,6 +48,8 @@ export const LoginForm = () => {
         setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
+            login(formData);
+            print()
             navigate('/otp', {
                 state: {
                     userName: formData.userName,
