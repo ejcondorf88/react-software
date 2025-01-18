@@ -4,6 +4,7 @@ import { Footer } from "../foo/Footer";
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useState } from 'react';
 const StatCard = ({ icon: Icon, title, value, trend }) => (
 
   
@@ -56,20 +57,35 @@ const Chart = () => (
 );
 
 export const Dashboard = () => {
-    const location = useLocation();
-    const  user = location.state?.user;
     const navigate = useNavigate();
-    const veryfyUser = () => {
-      if (!user) {
-        console.log("No hay usuario, redirigiendo a /login");
-        navigate('/login'); // Redirige al usuario a la página de login.
-      }
-      console.log("El usuario es:", user.name);      
-    }
+    const location = useLocation();
+    const [isLoading, setIsLoading] = useState(true);
+    const user = location.state?.user;
+
     useEffect(() => {
-      veryfyUser();
-      }
-  , [user, navigate]);
+        const verifyUser = () => {
+            if (!user) {
+                console.log("No hay usuario, redirigiendo a /login");
+                navigate('/login');
+                return;
+            }
+            console.log("El usuario es:", user.name);
+            setIsLoading(false);
+        };
+
+        verifyUser();
+    }, [user, navigate]);
+
+    if (isLoading) {
+        return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <p>Loading...</p>
+        </div>;
+    }
+
+    if (!user) {
+        return null; // This prevents any flash of content before redirect
+    }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={user.name} />

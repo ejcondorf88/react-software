@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Logo } from '../logo/Logo';
 import { Navigation } from '../navigation/Navigation';
 import { UserMenu } from '../usermenu/UserMenu';
@@ -9,9 +9,15 @@ export const Header = (username) => {
   const navigate = useNavigate();
   const handleLogout = useCallback(() => {
     // Add logout logic here
-    console.log('Logging out...');
-    navigate('/login');
+    localStorage.clear(); // Limpia el almacenamiento local
+    sessionStorage.clear(); // Limpia el almacenamiento de sesión
+
+    // Navega a la página de inicio de sesión y resetea el estado
+    navigate('/login', { replace: true, state: null });
   }, []);
+  useEffect(() => {
+    console.log(username);
+  }, [username]);
 
   return (
     <header className="bg-indigo-900 shadow-md">
