@@ -14,12 +14,16 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
   };
+  const updateUser = (userData) => {
+    setUser(userData);
+  };
 
   // Valor del contexto
   const value = {
     user,
     login,
     logout,
+    updateUser
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
