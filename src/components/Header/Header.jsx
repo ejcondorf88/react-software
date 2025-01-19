@@ -2,13 +2,17 @@ import { useCallback, useEffect } from 'react';
 import { Logo } from '../logo/Logo';
 import { Navigation } from '../navigation/Navigation';
 import { UserMenu } from '../usermenu/UserMenu';
-
+import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 export const Header = (username) => {
+
+  const { user, logout } = useAuth();
+
 
   const navigate = useNavigate();
   const handleLogout = useCallback(() => {
     // Add logout logic here
+    logout();
     localStorage.clear(); // Limpia el almacenamiento local
     sessionStorage.clear(); // Limpia el almacenamiento de sesión
 

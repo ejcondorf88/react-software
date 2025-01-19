@@ -61,7 +61,6 @@ export const Dashboard = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth();
-    print("user", user);
 
     useEffect(() => {
         const verifyUser = () => {

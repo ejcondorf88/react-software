@@ -3,7 +3,7 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { User, Lock } from 'lucide-react';
 import { InputField } from '../form/InputField';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 export const LoginForm = () => {
@@ -29,7 +29,6 @@ export const LoginForm = () => {
         });
     };
 
-    
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -49,13 +48,13 @@ export const LoginForm = () => {
         setTimeout(() => {
             setIsLoading(false);
             login(formData);
-            print()
+            // Eliminado print()
             navigate('/otp', {
                 state: {
                     userName: formData.userName,
                     password: formData.password
                 }
-            }); // Navega al componente OTP
+            });
         }, 1000);
     };
 
@@ -91,9 +90,9 @@ export const LoginForm = () => {
                     />
 
                     <div className="login-options">
-                        <a href="/forgot-password" className="forgot-password">
+                        <Link to="/forgot-password" className="forgot-password">
                             Forgot Password?
-                        </a>
+                        </Link>
                     </div>
 
                     <Button
@@ -106,7 +105,7 @@ export const LoginForm = () => {
 
                     <p className="signup-link">
                         Don't have an account?{' '}
-                        <a href="/register">Create one now</a>
+                        <Link to="/register">Create one now</Link>
                     </p>
                 </form>
             </Card>

@@ -3,8 +3,9 @@ import { Card } from 'primereact/card';
 import { Button } from 'primereact/button';
 import { Message } from 'primereact/message';
 import { Dialog } from 'primereact/dialog';
+import { Calendar } from 'primereact/calendar'; // Importamos Calendar de PrimeReact
 import PhoneInput from 'react-phone-input-2';
-import { User, Mail, Lock } from 'lucide-react';
+import { User, Mail, Lock, Calendar as CalendarIcon } from 'lucide-react';
 import { InputField } from '../form/InputField';
 import { SelectField } from '../form/SelectField';
 import { db } from '../../firebase';
@@ -26,6 +27,7 @@ const initialFormData = {
   password: '',
   phone: '0983408313',
   rol: 'ADMIN',
+  birthday: null, // Añadimos el campo birthday
 };
 
 const usersCollection = collection(db, 'Users');
@@ -52,6 +54,18 @@ export const RegisterForm = () => {
     }
   };
 
+  const handleBirthdayChange = (e) => {
+    setFormData((prev) => ({
+      ...prev,
+      birthday: e.value
+    }));
+    if (errors.birthday) {
+      setErrors((prev) => ({
+        ...prev,
+        birthday: undefined,
+      }));
+    }
+  };
 
   const handleRoleChange = (e) => {
     setFormData((prev) => ({
@@ -70,11 +84,16 @@ export const RegisterForm = () => {
 
     setIsLoading(true);
     try {
-      await addDoc(usersCollection, formData);
+      // Convertimos la fecha a string antes de enviarla a Firestore
+      const formDataToSubmit = {
+        ...formData,
+        birthday: formData.birthday ? formData.birthday.toISOString() : null,
+      };
+      
+      await addDoc(usersCollection, formDataToSubmit);
       setDialogMessage(`User ${formData.name} created successfully`);
       setShowDialog(true);
-      setFormData(initialFormData); // Limpiar formulario
-      
+      setFormData(initialFormData);
     } catch (error) {
       console.error("Error creating user:", error);
       setDialogMessage(error.message || 'An error occurred');
@@ -135,7 +154,32 @@ export const RegisterForm = () => {
               icon={<User size={20} />}
               placeholder="Pérez"
             />
+
+            {/* Añadimos el campo de fecha de nacimiento */}
+            <div className="field">
+              <label htmlFor="birthday">Birthday</label>
+              <div className="p-inputgroup">
+                <span className="p-inputgroup-addon">
+                  <CalendarIcon size={20} />
+                </span>
+                <Calendar
+                  id="birthday"
+                  name="birthday"
+                  value={formData.birthday}
+                  onChange={handleBirthdayChange}
+                  showIcon
+                  dateFormat="dd/mm/yy"
+                  maxDate={new Date()} // No permite fechas futuras
+                  placeholder="Select your birthday"
+                  className={errors.birthday ? 'p-invalid' : ''}
+                />
+              </div>
+              {errors.birthday && (
+                <small className="p-error">{errors.birthday}</small>
+              )}
+            </div>
           </div>
+          
           <InputField
             id="email"
             label="Email Address"
