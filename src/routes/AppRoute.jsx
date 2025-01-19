@@ -6,13 +6,14 @@ import { RegisterForm } from '../components/regiter/Register';
 import { Dashboard } from '../components/dashboard/Dashboard';
 import { Create } from '../components/create/Create';
 import { Profile } from '../components/profile/Profile';
+import { ProductTable } from '../components/table/ProductTable';
 
 export const AppRoute = () => (
     <div className="App">
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/register" element={<RegisterForm />} />
-        <Route path="/all-flats" element={<h1>All Flats</h1>} />
+        <Route path="/flats" element={<ProductTable />} />
         <Route path="/favorites" element={<h1>Favorites Flats</h1>} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/create" element={<Create />} />
