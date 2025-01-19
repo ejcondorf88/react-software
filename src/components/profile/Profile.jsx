@@ -9,13 +9,17 @@ import { Calendar } from 'primereact/calendar';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { validateForm as validate } from '../../utils/validate';
+import { getAuth } from "firebase/auth";
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 export const Profile = () => {
   const toast = useRef(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const auth = getAuth();
   
-  // Initialize form state
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -27,23 +31,45 @@ export const Profile = () => {
   
   const [errors, setErrors] = useState({});
   
-  // Use useEffect to handle navigation and form data initialization
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-      return;
-    }
-    
-    // Initialize form with user data once user is available
-    setFormData({
-      email: user.email || '',
-      password: user.password || '',
-      name: user.name || '',
-      lastName: user.lastName || '',
-      birthday: user.birthday || null,
-      rol: user.rol || 'ADMIN'
-    });
-  }, [user, navigate]);
+    const fetchUserData = async () => {
+      const currentUser = auth.currentUser;
+      
+      if (!currentUser) {
+        navigate('/login');
+        return;
+      }
+      
+      setUserId(currentUser.uid);
+      
+      try {
+        // Obtener datos del usuario desde Firestore
+        const userRef = doc(db, 'Users', currentUser.uid);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          setFormData({
+            email: userData.email || '',
+            password: userData.password || '',
+            name: userData.name || '',
+            lastName: userData.lastName || '',
+            birthday: userData.birthday ? new Date(userData.birthday) : null,
+            rol: userData.rol || 'ADMIN'
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to load user data'
+        });
+      }
+    };
+
+    fetchUserData();
+  }, [auth, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,16 +79,38 @@ export const Profile = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate(formData);
     
+    // Si NO hay errores de validación
     if (Object.keys(validationErrors).length === 0) {
-      if (toast.current) {
-        toast.current.show({
+      try {
+        const userRef = doc(db, 'Users', userId);
+        
+        // Preparar datos para actualizar
+        const updateData = {
+          email: formData.email,
+          name: formData.name,
+          lastName: formData.lastName,
+          birthday: formData.birthday,
+          rol: formData.rol
+        };
+
+        // Actualizar el documento
+        await updateDoc(userRef, updateData);
+
+        toast.current?.show({
           severity: 'success',
           summary: 'Success',
           detail: 'Profile updated successfully'
+        });
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update profile'
         });
       }
     } else {
@@ -70,13 +118,12 @@ export const Profile = () => {
     }
   };
 
-  // Add a loading state while user data is being fetched
   if (!user) {
-    return null; // or return a loading spinner
+    return <div>Loading...</div>;
   }
 
   return (
-    <div className="flex-col items-center">
+    <div className="flex flex-col items-center">
       <Toast ref={toast} />
       <Header user={user.name} />
       <Card className="w-full">
