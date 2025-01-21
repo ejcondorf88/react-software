@@ -3,7 +3,6 @@ import { User, LogOut, Settings, Bell } from 'lucide-react';
 
 
 export const UserMenu = ({ username, onLogout }) => {
-  console.log(username);
   const [isOpen, setIsOpen] = useState(false);
   const [hasNotifications] = useState(true);
 

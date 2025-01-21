@@ -19,9 +19,7 @@ export const Header = (username) => {
     // Navega a la página de inicio de sesión y resetea el estado
     navigate('/login', { replace: true, state: null });
   }, []);
-  useEffect(() => {
-    console.log(username);
-  }, [username]);
+  
 
   return (
     <header className="bg-indigo-900 shadow-md">

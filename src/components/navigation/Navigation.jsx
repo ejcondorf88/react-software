@@ -9,14 +9,28 @@ const navItems = [
   {href: '/users', icon: User, label: 'Users'},
 ];
 
+
+
 export const Navigation = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const currentPath = window.location.pathname;
-  if(user.rol === 'USER'){
-    navItems.pop();
+  const navItems = [
+    { href: '/dashboard', icon: Home, label: 'Home' },
+    { href: '/flats', icon: Building, label: 'Ver Pisos' },
+    { href: '/create', icon: PlusSquare, label: 'Crear Piso' },
+    { href: '/profile', icon: User, label: 'Perfil' },
+    { href: '/users', icon: User, label: 'Usuarios' },
+  ];
+  
+  // Crear una copia del array para modificar
+  let displayedItems = [...navItems];
+  
+  // Verificar si user existe y su rol antes de modificar el array
+  if (user?.rol === 'USER') {
+    displayedItems = displayedItems.filter(item => item.href !== '/users');
   }
- 
+
 
   const handleClick = (e, href) => {
     e.preventDefault(); // Evita la recarga de la página
