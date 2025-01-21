@@ -9,9 +9,15 @@ import { db } from '../../firebase';
 
 
 export function ProductTable() {
-  const [globalFilter, setGlobalFilter] = useState('');
-  const [products, setProducts] = useState([]);
 
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [products, setProducts] = useState([
+    // Sample data - replace this with your Supabase data
+   
+    
+    
+  
+  ]);
   useEffect(() => {
     const fetchProducts = async () => {
       const productsCollection = collection(db, 'Flats');
@@ -22,98 +28,64 @@ export function ProductTable() {
         ...doc.data()
       }));
       setProducts(fetchedProducts);
+      console.log(fetchedProducts);
     };
     fetchProducts();
-  }, []);
-
-  const dateTemplate = (rowData, field) => {
-    return new Date(rowData[field]).toLocaleDateString();
-  };
-
-  const booleanTemplate = (rowData) => {
-    return rowData.hasAC ? 'Yes' : 'No';
-  };
+  }, []); // <- Añadir array de dependencias vacío
+  
 
   return (
     <>
-      <Header />
-      <div>
-        <DataTable
-          value={products}
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25, 50]}
-          dataKey="id"
-          filters={{ global: { value: globalFilter, matchMode: 'contains' } }}
-          filterDisplay="menu"
-          globalFilterFields={['city', 'streetName', 'areaSize']}
-          header={<HeaderTable />}
-          emptyMessage="No properties found."
-          className="p-datatable-lg"
-          stripedRows
-          showGridlines
-          responsiveLayout="scroll"
-        >
-          <Column 
-            field="areaSize" 
-            header="Area (m²)" 
-            sortable 
-            filter 
-            filterPlaceholder="Search by area"
-          />
-          <Column 
-            field="city" 
-            header="City" 
-            sortable 
-            filter 
-            filterPlaceholder="Search by city"
-          />
-          <Column 
-            field="dateAvailable" 
-            header="Available Date" 
-            sortable
-            body={(rowData) => dateTemplate(rowData, 'dateAvailable')}
-            filter 
-            filterPlaceholder="Search by date"
-          />
-          <Column 
-            field="hasAC" 
-            header="AC" 
-            sortable
-            body={booleanTemplate}
-            filter 
-            filterPlaceholder="Search by AC"
-          />
-          <Column 
-            field="rentPrice" 
-            header="Rent Price" 
-            sortable 
-            filter 
-            filterPlaceholder="Search by price"
-          />
-          <Column 
-            field="streetName" 
-            header="Street" 
-            sortable 
-            filter 
-            filterPlaceholder="Search by street"
-          />
-          <Column 
-            field="streetNumber" 
-            header="Number" 
-            sortable 
-            filter 
-            filterPlaceholder="Search by number"
-          />
-          <Column 
-            field="yearBuilt" 
-            header="Year Built" 
-            sortable 
-            filter 
-            filterPlaceholder="Search by year"
-          />
-        </DataTable>
-      </div>
+    <Header />
+    <div >
+      <DataTable
+        value={products}
+        paginator
+        rows={10}
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        dataKey="id"
+        filters={{ global: { value: globalFilter, matchMode: 'contains' } }}
+        filterDisplay="menu"
+        globalFilterFields={['name', 'category', 'status']}
+        header={<HeaderTable />}
+        emptyMessage="No products found."
+        className="p-datatable-lg"
+        stripedRows
+        showGridlines
+      >
+        <Column 
+          field="name" 
+          header="Name" 
+          sortable 
+          filter 
+          filterPlaceholder="Search by name"
+          body={(rowData) => <span>{rowData.Name}</span>}
+        />
+        <Column 
+          field="price" 
+          header="Price" 
+          sortable 
+          filter 
+          filterPlaceholder="Search by price"
+          body={(rowData) => <span>${rowData.Price}</span>}
+        />
+       
+        <Column 
+          field="category" 
+          header="Category" 
+          sortable 
+          filter 
+          filterPlaceholder="Search by category"
+        />
+        <Column 
+          field="status" 
+          header="Status" 
+          sortable 
+          filter 
+          filterPlaceholder="Search by status"
+        />
+      </DataTable>
+    </div>
     </>
   );
 }
