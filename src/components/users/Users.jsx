@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
 import { Menu } from 'primereact/menu';
-import { useRef } from 'react';
 import { Toast } from 'primereact/toast';
 import { Header } from '../Header/Header';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase'; // Asegúrate de importar tu configuración de Firebase
 
 // Importa los estilos de PrimeReact
@@ -19,6 +18,7 @@ export const Users = () => {
     const [users, setUsers] = useState([]);
     const [globalFilter, setGlobalFilter] = useState('');
     const [loading, setLoading] = useState(true);
+    const [menuModel, setMenuModel] = useState([]); // Estado para manejar el modelo del menú
     const menuRef = useRef(null);
     const toast = useRef(null);
 
@@ -51,7 +51,26 @@ export const Users = () => {
         fetchUsers();
     }, []);
 
-    const menuItems = [
+    const deleteUser = async (userId) => {
+        try {
+            await deleteDoc(doc(db, 'Users', userId)); // Cambia 'Users' por el nombre de tu colección
+            setUsers(users.filter(user => user.id !== userId));
+            toast.current.show({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User deleted successfully',
+            });
+        } catch (error) {
+            console.error('Error deleting user:', error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to delete user',
+            });
+        }
+    };
+
+    const menuItems = (userId) => [
         {
             label: 'Edit',
             icon: 'pi pi-pencil',
@@ -63,7 +82,7 @@ export const Users = () => {
             label: 'Delete',
             icon: 'pi pi-trash',
             command: () => {
-                toast.current.show({ severity: 'error', summary: 'Delete', detail: 'Delete user clicked' });
+                deleteUser(userId);
             }
         }
     ];
@@ -77,8 +96,8 @@ export const Users = () => {
                     text 
                     severity="secondary"
                     onClick={(e) => {
-                        menuRef.current.toggle(e);
-                        menuRef.current.props.model = menuItems;
+                        setMenuModel(menuItems(rowData.id)); // Actualiza el modelo del menú
+                        menuRef.current.toggle(e); // Muestra el menú
                     }}
                     aria-controls="popup_menu" 
                     aria-haspopup
@@ -87,15 +106,7 @@ export const Users = () => {
         );
     };
 
-    const statusBodyTemplate = (rowData) => {
-        return (
-            <Tag 
-                value={rowData.status} 
-                severity={rowData.status === 'active' ? 'success' : 'danger'}
-                className="capitalize"
-            />
-        );
-    };
+ 
 
     const header = (
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -131,7 +142,7 @@ export const Users = () => {
             <Header />
             <div>
                 <Toast ref={toast} />
-                <Menu model={menuItems} popup ref={menuRef} />
+                <Menu model={menuModel} popup ref={menuRef} /> {/* Usa el estado menuModel */}
                 
                 <DataTable
                     value={users}
@@ -169,8 +180,6 @@ export const Users = () => {
                         filterPlaceholder="Search by role"
                         className="w-[150px]"
                     />
-            
-                
                     <Column 
                         body={actionBodyTemplate} 
                         exportable={false} 

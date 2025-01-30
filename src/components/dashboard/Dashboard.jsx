@@ -100,7 +100,7 @@ export function Dashboard() {
             />
           </DataTable>
         ) : (
-          <p>No tienes propiedades favoritas.</p>
+          <p className='text-center text-slate-950'>No tienes propiedades favoritas.</p>
         )}
       </div>
     </>

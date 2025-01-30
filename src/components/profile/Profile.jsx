@@ -30,6 +30,7 @@ export const Profile = () => {
   });
   
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(true); // Estado para manejar la carga
 
   // Función para validar y formatear la fecha
   const formatDateForFirestore = (date) => {
@@ -74,7 +75,7 @@ export const Profile = () => {
       }
       
       try {
-        const q = query(collection(db, "Users"), where("email", "==", user.email));
+        const q = query(collection(db, "Users"), where("email", "==", user?.email)); // Usar user?.email
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
@@ -98,11 +99,13 @@ export const Profile = () => {
           summary: 'Error',
           detail: 'Error al cargar los datos del usuario'
         });
+      } finally {
+        setLoading(false); // Finalizar la carga
       }
     };
 
     fetchUserData();
-  }, [auth, navigate, user.email]);
+  }, [auth, navigate, user?.email]); // Usar user?.email
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -163,8 +166,12 @@ export const Profile = () => {
     }));
   };
 
+  if (loading) {
+    return <div>Cargando...</div>; // Mostrar un mensaje de carga
+  }
+
   if (!user) {
-    return <div>Usuario no conectado</div>;
+    return <div>Usuario no conectado</div>; // Mostrar un mensaje si el usuario no está autenticado
   }
 
   return (
