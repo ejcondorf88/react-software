@@ -169,21 +169,8 @@ export const Users = () => {
                         filterPlaceholder="Search by role"
                         className="w-[150px]"
                     />
-                    <Column 
-                        field="status" 
-                        header="Status" 
-                        body={statusBodyTemplate}
-                        sortable
-                        filter
-                        filterPlaceholder="Search by status"
-                        className="w-[150px]"
-                    />
-                    <Column 
-                        field="lastLogin" 
-                        header="Last Login" 
-                        sortable
-                        className="w-[150px]"
-                    />
+            
+                
                     <Column 
                         body={actionBodyTemplate} 
                         exportable={false} 
