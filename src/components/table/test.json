@@ -1,0 +1,214 @@
+{
+    "version": "1.0",
+    "cells": [
+      {
+        "id": "inicio",
+        "value": "Inicio",
+        "style": "ellipse;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 60,
+          "y": 40,
+          "width": 100,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "recepcion",
+        "value": "Recepción de Solicitud",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 200,
+          "y": 40,
+          "width": 140,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "revision",
+        "value": "Revisión de Solicitud",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 400,
+          "y": 40,
+          "width": 140,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "informe",
+        "value": "Informe de Revisión",
+        "style": "shape=note;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 600,
+          "y": 40,
+          "width": 120,
+          "height": 60,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "convocatoria",
+        "value": "Convocatoria a Sesión",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 780,
+          "y": 40,
+          "width": 180,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "decision",
+        "value": "¿Ordinaria o Extraordinaria?",
+        "style": "rhombus;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1000,
+          "y": 40,
+          "width": 160,
+          "height": 80,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "ordinaria",
+        "value": "Convocar Sesión Ordinaria",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1200,
+          "y": -40,
+          "width": 180,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "presentar_ordinaria",
+        "value": "Presentar en Sesión Ordinaria",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1400,
+          "y": -40,
+          "width": 220,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "extraordinaria",
+        "value": "Convocar Sesión Extraordinaria",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1200,
+          "y": 120,
+          "width": 220,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "presentar_extraordinaria",
+        "value": "Presentar en Sesión Extraordinaria",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1400,
+          "y": 120,
+          "width": 220,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "resolucion_consejo",
+        "value": "Resolución del Consejo",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1600,
+          "y": 40,
+          "width": 220,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "aprobacion",
+        "value": "¿Aprobada?",
+        "style": "rhombus;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 1850,
+          "y": 40,
+          "width": 120,
+          "height": 80,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "notificar_aprobacion",
+        "value": "Notificar Aprobación",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 2000,
+          "y": 10,
+          "width": 180,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "registro_aprobacion",
+        "value": "Registro de Aprobación",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 2200,
+          "y": 10,
+          "width": 180,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "notificar_rechazo",
+        "value": "Notificar Rechazo",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 2000,
+          "y": 90,
+          "width": 180,
+          "height": 40,
+          "as": "geometry"
+        }
+      },
+      {
+        "id": "registro_rechazo",
+        "value": "Registro de Rechazo",
+        "style": "rounded=1;whiteSpace=wrap;html=1;",
+        "vertex": true,
+        "geometry": {
+          "x": 2200,
+          "y": 90,
+          "width": 180,
+          "height": 40,
+          "as": "geometry"
+        }
+      }
+    ]
+  }
+  

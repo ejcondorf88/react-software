@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" 
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                  xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd" 
+                  id="Definitions_1" 
+                  targetNamespace="http://bpmn.io/schema/bpmn">
+    <bpmn:process id="process_1" name="Flujo de Solicitud" isExecutable="true">
+        <bpmn:startEvent id="StartEvent_1" name="Inicio">
+            <bpmn:outgoing>Flow_1</bpmn:outgoing>
+        </bpmn:startEvent>
+        <bpmn:task id="Task_1" name="Recepción de Solicitud">
+            <bpmn:incoming>Flow_1</bpmn:incoming>
+            <bpmn:outgoing>Flow_2</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_2" name="Revisión de Solicitud">
+            <bpmn:incoming>Flow_2</bpmn:incoming>
+            <bpmn:outgoing>Flow_3</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_3" name="Informe de Revisión">
+            <bpmn:incoming>Flow_3</bpmn:incoming>
+            <bpmn:outgoing>Flow_4</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_4" name="Convocatoria a Sesión">
+            <bpmn:incoming>Flow_4</bpmn:incoming>
+            <bpmn:outgoing>Flow_5</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:exclusiveGateway id="Gateway_1" name="¿Ordinaria o Extraordinaria?">
+            <bpmn:incoming>Flow_5</bpmn:incoming>
+            <bpmn:outgoing>Flow_6</bpmn:outgoing>
+            <bpmn:outgoing>Flow_7</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:task id="Task_5" name="Convocar Sesión Ordinaria">
+            <bpmn:incoming>Flow_6</bpmn:incoming>
+            <bpmn:outgoing>Flow_8</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_6" name="Presentar en Sesión Ordinaria">
+            <bpmn:incoming>Flow_8</bpmn:incoming>
+            <bpmn:outgoing>Flow_10</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_7" name="Convocar Sesión Extraordinaria">
+            <bpmn:incoming>Flow_7</bpmn:incoming>
+            <bpmn:outgoing>Flow_9</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_8" name="Presentar en Sesión Extraordinaria">
+            <bpmn:incoming>Flow_9</bpmn:incoming>
+            <bpmn:outgoing>Flow_10</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_9" name="Resolución del Consejo">
+            <bpmn:incoming>Flow_10</bpmn:incoming>
+            <bpmn:outgoing>Flow_11</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:exclusiveGateway id="Gateway_2" name="¿Aprobada?">
+            <bpmn:incoming>Flow_11</bpmn:incoming>
+            <bpmn:outgoing>Flow_12</bpmn:outgoing>
+            <bpmn:outgoing>Flow_13</bpmn:outgoing>
+        </bpmn:exclusiveGateway>
+        <bpmn:task id="Task_10" name="Notificar Aprobación">
+            <bpmn:incoming>Flow_12</bpmn:incoming>
+            <bpmn:outgoing>Flow_14</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_11" name="Registro de Aprobación">
+            <bpmn:incoming>Flow_14</bpmn:incoming>
+            <bpmn:outgoing>Flow_15</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_12" name="Implementación">
+            <bpmn:incoming>Flow_15</bpmn:incoming>
+            <bpmn:outgoing>Flow_16</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_13" name="Evaluación y Retroalimentación">
+            <bpmn:incoming>Flow_16</bpmn:incoming>
+            <bpmn:outgoing>Flow_17</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_14" name="Cierre del Proceso">
+            <bpmn:incoming>Flow_17</bpmn:incoming>
+            <bpmn:outgoing>Flow_18</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:task id="Task_15" name="Seguimiento y Mejora Continua">
+            <bpmn:incoming>Flow_18</bpmn:incoming>
+            <bpmn:outgoing>Flow_19</bpmn:outgoing>
+        </bpmn:task>
+        <bpmn:endEvent id="EndEvent_1" name="Fin">
+            <bpmn:incoming>Flow_19</bpmn:incoming>
+        </bpmn:endEvent>
+        
+        <!-- Flows -->
+        <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+        <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_1" targetRef="Task_2"/>
+        <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_2" targetRef="Task_3"/>
+        <bpmn:sequenceFlow id="Flow_4" sourceRef="Task_3" targetRef="Task_4"/>
+        <bpmn:sequenceFlow id="Flow_5" sourceRef="Task_4" targetRef="Gateway_1"/>
+        <bpmn:sequenceFlow id="Flow_6" sourceRef="Gateway_1" targetRef="Task_5"/>
+        <bpmn:sequenceFlow id="Flow_7" sourceRef="Gateway_1" targetRef="Task_7"/>
+        <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_5" targetRef="Task_6"/>
+        <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_7" targetRef="Task_8"/>
+        <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_6" targetRef="Task_9"/>
+        <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_8" targetRef="Task_9"/>
+        <bpmn:sequenceFlow id="Flow_12" sourceRef="Gateway_2" targetRef="Task_10"/>
+        <bpmn:sequenceFlow id="Flow_13" sourceRef="Gateway_2" targetRef="Task_11"/>
+        <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_10" targetRef="Task_11"/>
+        <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_11" targetRef="Task_12"/>
+        <bpmn:sequenceFlow id="Flow_16" sourceRef="Task_12" targetRef="Task_13"/>
+        <bpmn:sequenceFlow id="Flow_17" sourceRef="Task_13" targetRef="Task_14"/>
+        <bpmn:sequenceFlow id="Flow_18" sourceRef="Task_14" targetRef="Task_15"/>
+        <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_15" targetRef="EndEvent_1"/>
+    </bpmn:process>
+</bpmn:definitions>
