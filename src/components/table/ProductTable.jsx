@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Header } from "../Header/Header";
-import { getDocs, collection, query, where } from "firebase/firestore";
+import { getDocs, collection, query, where, updateDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
+import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
+import { Toast } from "primereact/toast";
 
 export function ProductTable() {
   const [properties, setProperties] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
   const [favorites, setFavorites] = useState([]);
   const [searchParams, setSearchParams] = useState({
@@ -21,6 +25,8 @@ export function ProductTable() {
     minArea: null,
     maxArea: null,
   });
+
+  const toast = useRef(null);
 
   const searchProperties = async (params) => {
     try {
@@ -83,6 +89,45 @@ export function ProductTable() {
     });
   };
 
+  const handleSave = async () => {
+    try {
+      const propertyRef = doc(db, "Flats", selectedProperty.id);
+      await updateDoc(propertyRef, {
+        city: selectedProperty.city,
+        streetName: selectedProperty.streetName,
+        streetNumber: selectedProperty.streetNumber,
+        areaSize: selectedProperty.areaSize,
+        yearBuilt: selectedProperty.yearBuilt,
+        rentPrice: selectedProperty.rentPrice,
+        dateAvailable: selectedProperty.dateAvailable,
+        hasAC: selectedProperty.hasAC,
+      });
+
+      // Actualizar la lista de propiedades
+      const updatedProperties = properties.map((property) =>
+        property.id === selectedProperty.id ? selectedProperty : property
+      );
+      setProperties(updatedProperties);
+
+      // Cerrar el diálogo de edición
+      setEditVisible(false);
+
+      // Mostrar un mensaje de éxito
+      toast.current.show({
+        severity: "success",
+        summary: "Éxito",
+        detail: "Propiedad actualizada correctamente",
+      });
+    } catch (error) {
+      console.error("Error al actualizar la propiedad:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "No se pudo actualizar la propiedad",
+      });
+    }
+  };
+
   const actionBodyTemplate = (rowData) => {
     const isFavorite = favorites.includes(rowData.id);
     return (
@@ -94,6 +139,16 @@ export function ProductTable() {
           onClick={() => {
             setSelectedProperty(rowData);
             setVisible(true);
+          }}
+        />
+        <Button
+          icon="pi pi-pencil"
+          rounded
+          outlined
+          severity="info"
+          onClick={() => {
+            setSelectedProperty(rowData);
+            setEditVisible(true);
           }}
         />
         <Button
@@ -110,6 +165,7 @@ export function ProductTable() {
   return (
     <>
       <Header />
+      <Toast ref={toast} />
       <div className="card p-4 bg-white flex justify-center items-center">
         <div className="grid gap-4 mb-4">
           {/* Campos de filtro */}
@@ -185,7 +241,6 @@ export function ProductTable() {
           </div>
           <div className="col-12 md:col-6 lg:col-3 flex items-center justify-center">
             <Button
-
               label="Buscar"
               icon="pi pi-search"
               onClick={handleSearch}
@@ -281,6 +336,146 @@ export function ProductTable() {
                     onClick={() => toggleFavorite(selectedProperty.id)}
                   />
                 </p>
+              </div>
+            </div>
+          )}
+        </Dialog>
+
+        <Dialog
+          header="Editar Propiedad"
+          visible={editVisible}
+          style={{ width: "50vw" }}
+          onHide={() => setEditVisible(false)}
+        >
+          {selectedProperty && (
+            <div className="grid">
+              <div className="col-6">
+                <h5>Información General</h5>
+                <div className="p-field">
+                  <label htmlFor="city">Ciudad</label>
+                  <InputText
+                    id="city"
+                    value={selectedProperty.city}
+                    onChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        city: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="streetName">Calle</label>
+                  <InputText
+                    id="streetName"
+                    value={selectedProperty.streetName}
+                    onChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        streetName: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="streetNumber">Número</label>
+                  <InputNumber
+                    id="streetNumber"
+                    value={selectedProperty.streetNumber}
+                    onValueChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        streetNumber: e.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="areaSize">Área (m²)</label>
+                  <InputNumber
+                    id="areaSize"
+                    value={selectedProperty.areaSize}
+                    onValueChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        areaSize: e.value,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="col-6">
+                <h5>Características</h5>
+                <div className="p-field">
+                  <label htmlFor="yearBuilt">Año de Construcción</label>
+                  <InputNumber
+                    id="yearBuilt"
+                    value={selectedProperty.yearBuilt}
+                    onValueChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        yearBuilt: e.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="rentPrice">Precio de Renta</label>
+                  <InputNumber
+                    id="rentPrice"
+                    value={selectedProperty.rentPrice}
+                    onValueChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        rentPrice: e.value,
+                      })
+                    }
+                    mode="currency"
+                    currency="USD"
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="dateAvailable">Fecha Disponible</label>
+                  <Calendar
+                    id="dateAvailable"
+                    value={new Date(selectedProperty.dateAvailable)}
+                    onChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        dateAvailable: e.value,
+                      })
+                    }
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="hasAC">Aire Acondicionado</label>
+                  <Checkbox
+                    id="hasAC"
+                    checked={selectedProperty.hasAC}
+                    onChange={(e) =>
+                      setSelectedProperty({
+                        ...selectedProperty,
+                        hasAC: e.checked,
+                      })
+                    }
+                  />
+                </div>
+              </div>
+              <div className="col-12 flex justify-end gap-2 mt-4">
+                <Button
+                  label="Cancelar"
+                  icon="pi pi-times"
+                  onClick={() => setEditVisible(false)}
+                  className="p-button-secondary"
+                />
+                <Button
+                  label="Guardar"
+                  icon="pi pi-check"
+                  onClick={handleSave}
+                  className="p-button-success"
+                />
               </div>
             </div>
           )}

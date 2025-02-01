@@ -18,11 +18,11 @@ export const Create = () => {
   const [formData, setFormData] = useState({
     city: "",
     streetName: "",
-    streetNumber: null,
-    areaSize: null,
+    streetNumber: "",
+    areaSize: "",
     hasAC: false,
-    yearBuilt: null,
-    rentPrice: null,
+    yearBuilt: "",
+    rentPrice: "",
     dateAvailable: null
   });
   
@@ -40,21 +40,21 @@ export const Create = () => {
       newErrors.streetName = "Street name is required";
     }
 
-    if (!formData.streetNumber || formData.streetNumber <= 0) {
+    if (!formData.streetNumber || Number(formData.streetNumber) <= 0) {
       newErrors.streetNumber = "Valid street number is required";
     }
 
-    if (!formData.areaSize || formData.areaSize <= 0) {
+    if (!formData.areaSize || Number(formData.areaSize) <= 0) {
       newErrors.areaSize = "Valid area size is required";
     }
 
     if (!formData.yearBuilt) {
       newErrors.yearBuilt = "Year built is required";
-    } else if (formData.yearBuilt < 1800 || formData.yearBuilt > currentYear) {
+    } else if (Number(formData.yearBuilt) < 1800 || Number(formData.yearBuilt) > currentYear) {
       newErrors.yearBuilt = `Year must be between 1800 and ${currentYear}`;
     }
 
-    if (!formData.rentPrice || formData.rentPrice <= 0) {
+    if (!formData.rentPrice || Number(formData.rentPrice) <= 0) {
       newErrors.rentPrice = "Valid rent price is required";
     }
 
@@ -109,11 +109,11 @@ export const Create = () => {
         setFormData({
           city: "",
           streetName: "",
-          streetNumber: null,
-          areaSize: null,
+          streetNumber: "",
+          areaSize: "",
           hasAC: false,
-          yearBuilt: null,
-          rentPrice: null,
+          yearBuilt: "",
+          rentPrice: "",
           dateAvailable: null
         });
       } catch (error) {
@@ -131,7 +131,7 @@ export const Create = () => {
     const { id, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: id === "hasAC" ? value : (id === "streetNumber" || id === "areaSize" || id === "yearBuilt" || id === "rentPrice") ? Number(value) : value,
     }));
     if (errors[id]) {
       setErrors((prev) => ({

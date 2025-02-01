@@ -69,6 +69,7 @@ export const Profile = () => {
     const fetchUserData = async () => {
       const currentUser = auth.currentUser;
       
+      
       if (!currentUser) {
         navigate('/login');
         return;
